@@ -1,4 +1,4 @@
-package main
+package timecache_test
 
 import (
 	"testing"
@@ -6,11 +6,15 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/exp/slices"
+
+	"github.com/Dyleme/timecache"
 )
 
 func TestCache_Get(t *testing.T) {
+	t.Parallel()
 	t.Run("basic get", func(t *testing.T) {
-		c := NewCache[int, int]()
+		t.Parallel()
+		c := timecache.New[int, int]()
 		amount := 100
 		for i := 0; i < amount; i++ {
 			c.StoreDefDur(i, i)
@@ -24,8 +28,10 @@ func TestCache_Get(t *testing.T) {
 }
 
 func TestCache_ExpirationGet(t *testing.T) {
+	t.Parallel()
 	t.Run("expiration", func(t *testing.T) {
-		c := NewCache[int, int]()
+		t.Parallel()
+		c := timecache.New[int, int]()
 		amount := 100
 		expiredVals := []int{1, 10, 25, 76}
 		for i := 0; i < amount; i++ {
@@ -50,8 +56,10 @@ func TestCache_ExpirationGet(t *testing.T) {
 }
 
 func TestCache_DeletedGet(t *testing.T) {
+	t.Parallel()
 	t.Run("deleted", func(t *testing.T) {
-		c := NewCache[int, int]()
+		t.Parallel()
+		c := timecache.New[int, int]()
 		amount := 100
 		for i := 0; i < amount; i++ {
 			c.StoreDefDur(i, i)
@@ -77,8 +85,10 @@ func TestCache_DeletedGet(t *testing.T) {
 }
 
 func TestCache_CleanExpired(t *testing.T) {
+	t.Parallel()
 	t.Run("expiration", func(t *testing.T) {
-		c := NewCache[int, int]()
+		t.Parallel()
+		c := timecache.New[int, int]()
 		amount := 100
 		var expiredVals []int
 		for i := 0; i < amount; i++ {
@@ -102,9 +112,9 @@ func TestCache_CleanExpired(t *testing.T) {
 	})
 
 	t.Run("non blocking deletion", func(t *testing.T) {
-		// c := NewCache[int, int]()
-		c := NewCacheWithConfig[int, int](Config{
-			JanitorConfig: JanitorConfig{
+		t.Parallel()
+		c := timecache.NewWithConfig[int, int](timecache.Config{
+			JanitorConfig: timecache.JanitorConfig{
 				StopJanitorEvery: 10000,
 			},
 		})

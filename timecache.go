@@ -1,4 +1,4 @@
-package main
+package timecache
 
 import (
 	"errors"
@@ -50,22 +50,22 @@ type expVal[V any] struct {
 	val     V
 }
 
-func NewCache[K constraints.Ordered, V any]() *Cache[K, V] {
-	return NewCacheWithConfig[K, V](Config{
+func New[K constraints.Ordered, V any]() *Cache[K, V] {
+	return NewWithConfig[K, V](Config{
 		JanitorConfig: JanitorConfig{
 			CleanPeriod: defaultCleanPeriodTime,
 		},
 	})
 }
 
-func NewCacheWithConfig[K constraints.Ordered, V any](cfg Config) *Cache[K, V] {
+func NewWithConfig[K constraints.Ordered, V any](cfg Config) *Cache[K, V] {
 	storeTime := cfg.StoreTime
 	if storeTime == 0 {
 		storeTime = defaultStoreDuration
 	}
 	c := Cache[K, V]{
 		m:                make(map[K]expVal[V]),
-		defStoreTime:     cfg.StoreTime,
+		defStoreTime:     storeTime,
 		cleanPeriod:      cfg.JanitorConfig.CleanPeriod,
 		janitorStops:     cfg.JanitorConfig.StopJanitorEvery != 0,
 		stopJanitorEvery: cfg.JanitorConfig.StopJanitorEvery,
